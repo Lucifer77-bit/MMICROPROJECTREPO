@@ -1,0 +1,241 @@
+@import "tailwindcss";
+
+/* Class-based dark mode (the toggle adds `.dark` to <html>).
+   Tailwind v4 defaults to prefers-color-scheme, which ignored the toggle. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SmartSpend design tokens
+   The whole app was built on `slate` + `emerald`. Instead of rewriting every
+   page, those scales are re-tuned here into a warmer palette:
+     slate   → paper and ink (warm neutrals)
+     emerald → forest green
+   plus two accents: terracotta (`clay`) and mustard (`honey`).
+   ────────────────────────────────────────────────────────────────────────── */
+@theme {
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+
+  --color-white: #fffdf9;
+
+  --color-slate-50: #f7f3ec;
+  --color-slate-100: #efe9df;
+  --color-slate-200: #e3dacb;
+  --color-slate-300: #cfc3b0;
+  --color-slate-400: #a69a87;
+  --color-slate-500: #7b7060;
+  --color-slate-600: #5e5548;
+  --color-slate-700: #453e35;
+  --color-slate-800: #2d2924;
+  --color-slate-900: #1e1b17;
+  --color-slate-950: #14120f;
+
+  --color-emerald-50: #edf5ef;
+  --color-emerald-100: #d5e7da;
+  --color-emerald-200: #add0b8;
+  --color-emerald-300: #7db291;
+  --color-emerald-400: #4f936c;
+  --color-emerald-500: #357a56;
+  --color-emerald-600: #2a6446;
+  --color-emerald-700: #225039;
+  --color-emerald-800: #1c402f;
+  --color-emerald-900: #163327;
+
+  --color-clay-100: #f6ddd5;
+  --color-clay-400: #d9765e;
+  --color-clay-500: #c8553d;
+  --color-clay-600: #a84530;
+
+  --color-honey-100: #fbf0d3;
+  --color-honey-200: #f6e2a8;
+  --color-honey-400: #e9b44c;
+  --color-honey-600: #b9861f;
+
+  --color-navy-50: #f0f4f8;
+  --color-navy-100: #d9e2ec;
+  --color-navy-200: #bcccdc;
+  --color-navy-300: #9fb3c8;
+  --color-navy-400: #829ab1;
+  --color-navy-500: #627d98;
+  --color-navy-600: #486581;
+  --color-navy-700: #334e68;
+  --color-navy-800: #243b53;
+  --color-navy-900: #102a43;
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-slate-50);
+    color: var(--color-slate-900);
+    /* faint paper grain */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0 0.2 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .dark body {
+    background-color: var(--color-slate-950);
+    color: var(--color-slate-100);
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.015em;
+  }
+
+  ::selection {
+    background: var(--color-honey-200);
+    color: var(--color-slate-900);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-clay-500);
+    outline-offset: 2px;
+  }
+
+  /* quieter scrollbars */
+  * { scrollbar-width: thin; scrollbar-color: var(--color-slate-300) transparent; }
+  .dark * { scrollbar-color: var(--color-slate-700) transparent; }
+}
+
+/* ── Hand-made bits ───────────────────────────────────────────────────────── */
+@layer components {
+  /* handwritten annotation */
+  .hand {
+    font-family: var(--font-hand);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  /* sticky note */
+  .sticky-note {
+    position: relative;
+    background: var(--color-honey-100);
+    color: var(--color-slate-800);
+    padding: 0.9rem 1rem 1rem;
+    border-radius: 2px 2px 14px 2px;
+    box-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.04),
+      0 10px 18px -12px rgba(60, 40, 10, 0.45);
+  }
+  .sticky-note::before {
+    /* strip of tape */
+    content: "";
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    width: 64px;
+    height: 18px;
+    transform: translateX(-50%) rotate(-3deg);
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  .dark .sticky-note {
+    background: #3a3220;
+    color: var(--color-honey-100);
+  }
+
+  /* wavy marker underline */
+  .scribble {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8 C 30 2, 55 11, 85 6 S 140 3, 170 8 S 192 6, 198 5' fill='none' stroke='%23c8553d' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 100% 0.4em;
+    background-position: 0 100%;
+    padding-bottom: 0.12em;
+  }
+
+  /* marker highlight */
+  .highlight {
+    background: linear-gradient(104deg, transparent 2%, var(--color-honey-200) 4%, var(--color-honey-200) 94%, transparent 97%);
+    padding: 0 0.2em;
+    border-radius: 0.2em;
+  }
+  .dark .highlight {
+    background: linear-gradient(104deg, transparent 2%, rgba(233, 180, 76, 0.3) 4%, rgba(233, 180, 76, 0.3) 94%, transparent 97%);
+  }
+
+  /* receipt edge */
+  .receipt {
+    background: var(--color-white);
+    -webkit-mask: radial-gradient(circle 6px at 50% 100%, transparent 98%, #000) 0 0 / 16px 100% repeat-x;
+            mask: radial-gradient(circle 6px at 50% 100%, transparent 98%, #000) 0 0 / 16px 100% repeat-x;
+    padding-bottom: 1.6rem;
+  }
+
+  .dotted-rule {
+    border: 0;
+    border-top: 2px dotted var(--color-slate-300);
+  }
+
+  /* gentle lift on hover for cards */
+  .lift {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .lift:hover {
+    transform: translateY(-2px) rotate(-0.25deg);
+    box-shadow: 0 14px 28px -18px rgba(45, 35, 20, 0.5);
+  }
+
+  .fade-up {
+    animation: fade-up 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .wiggle:hover { animation: wiggle 0.5s ease-in-out; }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0); }
+    30% { transform: rotate(-4deg); }
+    60% { transform: rotate(3deg); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up, .wiggle:hover, .lift:hover { animation: none; transform: none; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Dark-mode fallbacks
+   Pages written without explicit `dark:` classes still get a sensible dark
+   theme. Any element that sets its own `dark:` class is left alone.
+   ────────────────────────────────────────────────────────────────────────── */
+.dark .bg-white:not([class*="dark:bg-"]) { background-color: var(--color-slate-800); }
+.dark .bg-slate-50:not([class*="dark:bg-"]) { background-color: var(--color-slate-900); }
+.dark .bg-slate-100:not([class*="dark:bg-"]) { background-color: var(--color-slate-700); }
+.dark .bg-slate-200:not([class*="dark:bg-"]) { background-color: var(--color-slate-700); }
+
+.dark :is(.border-slate-100, .border-slate-200, .border-slate-300):not([class*="dark:border-"]) {
+  border-color: var(--color-slate-700);
+}
+.dark :is(.divide-slate-100, .divide-slate-200) > :not(:last-child) { border-color: var(--color-slate-700); }
+
+.dark :is(.text-slate-900, .text-slate-800, .text-slate-700):not([class*="dark:text-"]) { color: var(--color-slate-100); }
+.dark :is(.text-slate-600, .text-slate-500):not([class*="dark:text-"]) { color: var(--color-slate-400); }
+
+.dark .bg-amber-50:not([class*="dark:bg-"])   { background-color: color-mix(in oklab, var(--color-amber-500) 14%, transparent); }
+.dark .bg-emerald-50:not([class*="dark:bg-"]) { background-color: color-mix(in oklab, var(--color-emerald-500) 16%, transparent); }
+.dark .bg-blue-50:not([class*="dark:bg-"])    { background-color: color-mix(in oklab, var(--color-blue-500) 14%, transparent); }
+.dark .bg-red-50:not([class*="dark:bg-"])     { background-color: color-mix(in oklab, var(--color-red-500) 14%, transparent); }
+.dark .bg-purple-50:not([class*="dark:bg-"])  { background-color: color-mix(in oklab, var(--color-purple-500) 14%, transparent); }
+.dark .bg-orange-50:not([class*="dark:bg-"])  { background-color: color-mix(in oklab, var(--color-orange-500) 14%, transparent); }
+.dark :is(.border-amber-100, .border-emerald-100, .border-blue-100, .border-red-100, .border-purple-100):not([class*="dark:border-"]) {
+  border-color: var(--color-slate-700);
+}
+
+.dark :is(input, select, textarea):not([class*="dark:bg-"]) {
+  background-color: var(--color-slate-900);
+  color: var(--color-slate-100);
+  border-color: var(--color-slate-600);
+}
+.dark :is(.hover\:bg-slate-50, .hover\:bg-slate-100):not([class*="dark:hover"]):hover {
+  background-color: var(--color-slate-700);
+}
